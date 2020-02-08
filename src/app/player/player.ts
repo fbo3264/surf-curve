@@ -101,17 +101,18 @@ export class Player {
     }
 
     doAction(cmd: INPUT_ACTION, keyReleased?: boolean) {
-        if (keyReleased && (cmd == INPUT_ACTION.ROTATE_RIGHT || cmd == INPUT_ACTION.ROTATE_LEFT)) {
-            this.leftPressed = false;
-            this.rightPressed = false;
+        if (keyReleased) {
+            if (cmd === INPUT_ACTION.ROTATE_LEFT) {
+                this.leftPressed = false;
+            } else if (cmd === INPUT_ACTION.ROTATE_RIGHT) {
+                this.rightPressed = false;
+            }
         } else if (keyReleased && cmd === INPUT_ACTION.ROTATE_BOOST) {
             this.boostReservoir.handleBoostPressed(true);
         } else {
             if (cmd === INPUT_ACTION.ROTATE_LEFT) {
                 this.leftPressed = true;
-                this.rightPressed = false;
             } else if (cmd === INPUT_ACTION.ROTATE_RIGHT) {
-                this.leftPressed = false;
                 this.rightPressed = true;
             } else if (cmd === INPUT_ACTION.ROTATE_BOOST) {
                 this.boostReservoir.handleBoostPressed();
