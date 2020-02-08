@@ -3,11 +3,11 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
-    styleUrls: ['./header.component.css']
+    styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
 
-    @Output() toggleSideBarForMe: EventEmitter<any> = new EventEmitter();
+    @Output() toggleSidebarEmitter: EventEmitter<any> = new EventEmitter();
 
     constructor() {
     }
@@ -16,7 +16,7 @@ export class HeaderComponent implements OnInit {
     }
 
     toggleSideBar() {
-        this.toggleSideBarForMe.emit();
+        this.toggleSidebarEmitter.emit();
         setTimeout(() => {
             window.dispatchEvent(
                 new Event('resize')

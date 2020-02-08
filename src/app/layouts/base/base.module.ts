@@ -4,27 +4,32 @@ import {RouterModule} from '@angular/router';
 import {MatCardModule, MatDividerModule, MatPaginatorModule, MatSidenavModule, MatTableModule} from '@angular/material';
 import {BaseComponent} from "./base.component";
 import {HomeComponent} from "../home/home.component";
-import {FlexLayoutModule} from "@angular/flex-layout";
-import {SharedModule} from "../../shared/shared.module";
+import {SharedModule} from "../shared/shared.module";
+import {GameBoardComponent} from "../../modules/game-board/game-board.component";
+import {MatIconModule} from "@angular/material/icon";
+import {FlexLayoutModule} from '@angular/flex-layout';
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
     declarations: [
         BaseComponent,
-        HomeComponent
+        HomeComponent,
+        GameBoardComponent
     ],
     imports: [
         CommonModule,
         RouterModule,
+        SharedModule,
         MatSidenavModule,
         MatDividerModule,
         FlexLayoutModule,
         MatCardModule,
         MatPaginatorModule,
         MatTableModule,
-        SharedModule
+        MatButtonModule,
+        MatIconModule
     ],
-    providers: [
-    ]
+    providers: []
 })
 export class BaseModule {
 }

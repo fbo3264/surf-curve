@@ -1,13 +1,13 @@
 import {
+    GAP_STEP_SIZE,
     INPUT_ACTION,
     ROTATE_BOOST_DURATION,
     ROTATE_BOOST_FACTOR,
     ROTATION_STEP,
     TRANSLATION_STEP
 } from '../../constants';
-import {Point} from './Point';
-import {GameLogic} from "../shared/GameLogic";
-import {Injectable} from "@angular/core";
+import {GameHelper} from "../shared/GameHelper";
+import {Point} from "../shared/Point";
 import {CollisionDetector} from "../shared/CollisionDetector";
 
 export class BoostReservoir {
@@ -19,8 +19,8 @@ export class BoostReservoir {
         this.isRecharging = false;
     }
 
-    canActivate() {
-        const now = GameLogic.timestamp();
+    isActivated() {
+        const now = GameHelper.timestamp();
         this.isRecharging = false;
         if (!this.rotateBoostPressed) {
             return false;
@@ -46,9 +46,40 @@ export class BoostReservoir {
             this.rotateBoostPressed = false;
         } else {
             if (!this.rotateBoostPressed) {
-                this.startRotatePressedMs = GameLogic.timestamp();
+                this.startRotatePressedMs = GameHelper.timestamp();
             }
             this.rotateBoostPressed = true;
+        }
+    }
+}
+
+export class GapFeature {
+    private lastGapCheck = GameHelper.timestamp();
+    private gapStepCount = 0;
+    isActive = false;
+
+    canActivate() {
+        const now = GameHelper.timestamp();
+        if (this.lastGapCheck + 5000 < now) {
+            this.lastGapCheck = now;
+            const rnd = Math.random();
+            if (rnd < 0.33) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    activate() {
+        this.isActive = true;
+
+    }
+
+    increaseGapCount() {
+        this.gapStepCount++;
+        if (this.gapStepCount >= GAP_STEP_SIZE) {
+            this.isActive = false;
+            this.gapStepCount = 0;
         }
     }
 }
@@ -57,13 +88,16 @@ export class Player {
     private lastPosition: Point;
     private currPosition: Point;
     private currAngleDeg: number;
+    private inGapeMode = false;
     private leftPressed?: boolean;
     private rightPressed?: boolean;
     private lineWidth: number;
     private boostReservoir = new BoostReservoir();
+    private gapFeature = new GapFeature();
     private collisionDetector: CollisionDetector;
     alive: boolean = true;
     strokeStyle: string;
+    private last
 
     constructor(private readonly ctx: CanvasRenderingContext2D, private readonly name: string,
                 point: Point, angle: number, color: string) {
@@ -77,7 +111,7 @@ export class Player {
 
     move() {
         let rotationStep = ROTATION_STEP;
-        if (this.boostReservoir.canActivate()) {
+        if (this.boostReservoir.isActivated()) {
             rotationStep = rotationStep * this.boostReservoir.getBoostAmount();
         }
         if (this.leftPressed) {
@@ -96,9 +130,17 @@ export class Player {
         if (CollisionDetector.hasCollision(this.currPosition)) {
             this.alive = false;
         }
-        CollisionDetector.put(this.currPosition);
-
+        // check if can set the player into gap mode
+        if (!this.gapFeature.isActive && this.gapFeature.canActivate()) {
+            this.gapFeature.activate();
+        }
+        if (!this.gapFeature.isActive) {
+            CollisionDetector.put(this.currPosition);
+        } else {
+            this.gapFeature.increaseGapCount();
+        }
     }
+
 
     doAction(cmd: INPUT_ACTION, keyReleased?: boolean) {
         if (keyReleased) {
@@ -106,9 +148,9 @@ export class Player {
                 this.leftPressed = false;
             } else if (cmd === INPUT_ACTION.ROTATE_RIGHT) {
                 this.rightPressed = false;
+            } else if (cmd === INPUT_ACTION.ROTATE_BOOST) {
+                this.boostReservoir.handleBoostPressed(true);
             }
-        } else if (keyReleased && cmd === INPUT_ACTION.ROTATE_BOOST) {
-            this.boostReservoir.handleBoostPressed(true);
         } else {
             if (cmd === INPUT_ACTION.ROTATE_LEFT) {
                 this.leftPressed = true;
@@ -121,7 +163,7 @@ export class Player {
     }
 
     draw() {
-        this.ctx.strokeStyle = '#FF0000';
+        if (this.gapFeature.isActive) return;
         this.ctx.beginPath();
         this.ctx.moveTo(this.lastPosition.x, this.lastPosition.y);
         this.ctx.lineTo(this.currPosition.x, this.currPosition.y);

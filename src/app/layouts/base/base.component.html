@@ -1,4 +1,4 @@
-<app-header (toggleSideBarForMe)="sideBarToggler($event)"></app-header>
+<app-header (toggleSidebarEmitter)="sideBarToggler($event)"></app-header>
 
 <mat-drawer-container>
     <mat-drawer mode="side" [opened]="sideBarOpen">
@@ -8,5 +8,3 @@
         <router-outlet></router-outlet>
     </mat-drawer-content>
 </mat-drawer-container>
-
-<app-footer></app-footer>

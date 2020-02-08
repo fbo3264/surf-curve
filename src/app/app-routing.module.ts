@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {RouterModule, Routes} from "@angular/router";
 import {HomeComponent} from "./layouts/home/home.component";
-import {GameBoardComponent} from "./game-board/game-board.component";
+import {GameBoardComponent} from "./modules/game-board/game-board.component";
 import {BaseComponent} from "./layouts/base/base.component";
 
 

@@ -3,17 +3,42 @@
         Welcome to Surf-Curve!
     </h1>
 </div>
-<div class="container" fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="0.5%" fxLayoutAlign="center">
-    <div fxFlex="20%">
-        <img mat-card-image class="img" src="https://d2lm6fxwu08ot6.cloudfront.net/img-thumbs/960w/8V46UZCS0V.jpg">
-    </div>
-    <div fxFlex="20%">
-        <img mat-card-image class="img" src="https://d2lm6fxwu08ot6.cloudfront.net/img-thumbs/960w/LTLE4QGRVQ.jpg">
-    </div>
-    <div fxFlex="20%">
-        <img mat-card-image class="img" src="https://d2lm6fxwu08ot6.cloudfront.net/img-thumbs/960w/R926LU1YEA.jpg">
-    </div>
-    <div fxFlex="20%">
-        <img mat-card-image class="img" src="https://d2lm6fxwu08ot6.cloudfront.net/img-thumbs/960w/U9PP3KXXY2.jpg">
-    </div>
+<div fxLayout="column" fxLayoutAlign="center" fxLayout.gt-sm="row" fxLayoutGap="20px" >
+    <mat-card fxFlex="25">
+        <mat-card-header>
+            <div mat-card-avatar>
+                <mat-icon>multiline_chart</mat-icon>
+            </div>
+            <mat-card-title>Neues Spiel</mat-card-title>
+            <mat-card-subtitle>(Multiplayer One-Screen)</mat-card-subtitle>
+        </mat-card-header>
+        <img mat-card-image src="../../../assets/img/mutliplayer_preview.jpeg" alt="multiplayer-preview">
+        <mat-card-content>
+            <p>
+                Starte ein neues Multiplayer-Spiel - Du spielst auf diesem Computer gegen deine Mitstreiter.
+            </p>
+        </mat-card-content>
+        <mat-card-actions>
+            <button (click)="initGame()" mat-stroked-button color="primary">GO</button>
+        </mat-card-actions>
+    </mat-card>
+    <mat-card fxFlex="25">
+        <mat-card-header>
+            <div mat-card-avatar>
+                <mat-icon>show_chart</mat-icon>
+            </div>
+            <mat-card-title>Neues Spiel</mat-card-title>
+            <mat-card-subtitle>(Übungsmodus)</mat-card-subtitle>
+        </mat-card-header>
+        <img mat-card-image src="../../../assets/img/singleplayer_preview.jpeg" alt="singleplayer-preview">
+        <mat-card-content>
+            <p>
+                Starte ein neues Singleplayer-Spiel
+            </p>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-stroked-button color="primary">GO</button>
+        </mat-card-actions>
+    </mat-card>
+
 </div>

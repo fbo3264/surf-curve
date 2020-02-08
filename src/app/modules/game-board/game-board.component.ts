@@ -1,35 +1,31 @@
 import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {
-    COLORS,
     DEFAULT_KEYMAP,
-    FIELD_HEIGHT,
-    FIELD_WIDTH,
     GAME_LOOP_INTERVAL,
     INPUT_ACTION,
-    START_POSITIONS
 } from '../../constants';
 import {Player} from '../player/player';
-import {ToastrService} from "ngx-toastr";
-import {Notification} from "../shared/Notification";
-import {GameLogic} from "../shared/GameLogic";
+import {GameHelper} from "../shared/GameHelper";
 import {CollisionDetector} from "../shared/CollisionDetector";
 
 @Component({
     selector: 'app-game-board',
     templateUrl: './game-board.component.html',
-    styleUrls: ['./game-board.component.css']
+    styleUrls: ['./game-board.component.scss']
 })
 export class GameBoardComponent implements OnInit {
     @ViewChild('board', {static: true})
     private canvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('canvasHolder', {static: true})
+    private canvasHolder: ElementRef<HTMLDivElement>;
 
     private players: Player[] = [];
     private ctx: CanvasRenderingContext2D;
     private keyPlayerActionMap: Record<string, { player: Player; action: INPUT_ACTION }> = {};
-    private time = {last: GameLogic.timestamp(), intervalMs: GAME_LOOP_INTERVAL};
+    private time = {last: GameHelper.timestamp(), intervalMs: GAME_LOOP_INTERVAL};
     private gameRunning = false;
 
-    constructor(private readonly gameLogic: GameLogic) {
+    constructor() {
     }
 
     ngOnInit() {
@@ -40,13 +36,10 @@ export class GameBoardComponent implements OnInit {
 
     private initBoard() {
         this.ctx = this.canvas.nativeElement.getContext('2d');
-
-        // Calculate size of canvas from constants.
-        this.ctx.canvas.width = FIELD_WIDTH;
-        this.ctx.canvas.height = FIELD_HEIGHT;
-
-        // Scale so we don't need to give size on every draw.
-        // this.ctx.scale(10, 10);
+        setTimeout(() => {
+            this.handleResize();
+            GameHelper.initStartPosistions();
+        }, 2000)
     }
 
     startGame() {
@@ -60,7 +53,7 @@ export class GameBoardComponent implements OnInit {
         if (this.checkWinner(alivePlayers) || !this.gameRunning) {
             return;
         }
-        const now = GameLogic.timestamp();
+        const now = GameHelper.timestamp();
         const dt = (now - this.time.last);
         if (dt >= this.time.intervalMs) {
             alivePlayers.forEach(p => p.move());
@@ -97,8 +90,8 @@ export class GameBoardComponent implements OnInit {
     }
 
     addPlayer() {
-        const {point, angle} = START_POSITIONS[this.players.length];
-        const color = COLORS[this.players.length];
+        const {point, angle} = GameHelper.START_POSITIONS[this.players.length];
+        const color = GameHelper.COLORS[this.players.length];
         const player = new Player(this.ctx, this.players.length.toString(), point, angle, color);
         const keyActions = DEFAULT_KEYMAP[this.players.length];
 
@@ -110,7 +103,7 @@ export class GameBoardComponent implements OnInit {
     }
 
     resetGame() {
-        this.ctx.clearRect(0, 0, FIELD_WIDTH, FIELD_HEIGHT);
+        this.ctx.clearRect(0, 0, GameHelper.GAME_BOARD_WIDTH, GameHelper.GAME_BOARD_HEIGHT);
         const nrOfPlayers = this.players.length;
         this.players = [];
         for (let i = 0; i < nrOfPlayers; i++) {
@@ -118,5 +111,12 @@ export class GameBoardComponent implements OnInit {
         }
         CollisionDetector.reset();
         this.gameRunning = false;
+    }
+
+    handleResize() {
+        GameHelper.GAME_BOARD_HEIGHT = this.canvasHolder.nativeElement.clientHeight * 0.8;
+        GameHelper.GAME_BOARD_WIDTH = this.canvasHolder.nativeElement.clientWidth - 20;
+        this.ctx.canvas.width = GameHelper.GAME_BOARD_WIDTH;
+        this.ctx.canvas.height = GameHelper.GAME_BOARD_HEIGHT;
     }
 }

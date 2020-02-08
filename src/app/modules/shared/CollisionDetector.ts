@@ -1,5 +1,6 @@
-import {Point} from "../player/Point";
-import {FIELD_HEIGHT, FIELD_WIDTH} from "../../constants";
+import {Point} from "./Point";
+import {GameBoardComponent} from "../game-board/game-board.component";
+import {GameHelper} from "./GameHelper";
 
 export class CollisionDetector {
     constructor(private readonly ctx: CanvasRenderingContext2D) {
@@ -15,7 +16,8 @@ export class CollisionDetector {
     }
 
     static hasCollision(point: Point) {
-        if (point.x >= FIELD_WIDTH || point.x < 0 || point.y < 0 || point.y >= FIELD_HEIGHT) {
+        return false;
+        if (point.x >= GameHelper.GAME_BOARD_WIDTH || point.x < 0 || point.y < 0 || point.y >= GameHelper.GAME_BOARD_HEIGHT) {
             return true;
         }
         for (const box of this.collisionBoxes) {
