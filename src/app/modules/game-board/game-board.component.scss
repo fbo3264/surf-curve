@@ -3,6 +3,25 @@ canvas {
 }
 
 .game-board {
-  border: solid 2px;
+
+  canvas {
+    border: solid 2px;
+  }
 }
 
+.game-ctrls {
+
+  button {
+    min-width: 100px;
+    margin: 20px;
+  }
+
+}
+
+.game-status-bar {
+  margin-right: 30px;
+
+  mat-card {
+    margin-bottom: 30px;
+  }
+}

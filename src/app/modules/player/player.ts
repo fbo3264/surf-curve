@@ -10,46 +10,17 @@ import {GameHelper} from "../shared/GameHelper";
 import {Point} from "../shared/Point";
 import {CollisionDetector} from "../shared/CollisionDetector";
 
-export class BoostReservoir {
-    private isRecharging: boolean;
-    rotateBoostPressed: boolean;
-    startRotatePressedMs: number;
-
-    constructor() {
-        this.isRecharging = false;
-    }
-
-    isActivated() {
-        const now = GameHelper.timestamp();
-        this.isRecharging = false;
-        if (!this.rotateBoostPressed) {
-            return false;
-        }
-        if (this.startRotatePressedMs + ROTATE_BOOST_DURATION > now) {
-            return true;
-        }
-        if (this.startRotatePressedMs + ROTATE_BOOST_DURATION * 2 < now) {
-            this.startRotatePressedMs = now;
-            return true;
-        }
-        this.isRecharging = true;
-        return false;
-
-    }
+export class BoostFeature {
+    isActive: boolean = false;
+    isRequested: boolean = false;
 
     getBoostAmount() {
         return ROTATE_BOOST_FACTOR;
     }
 
-    handleBoostPressed(released = false) {
-        if (released) {
-            this.rotateBoostPressed = false;
-        } else {
-            if (!this.rotateBoostPressed) {
-                this.startRotatePressedMs = GameHelper.timestamp();
-            }
-            this.rotateBoostPressed = true;
-        }
+
+    request(isRequested = true) {
+        this.isRequested = isRequested;
     }
 }
 
@@ -63,7 +34,7 @@ export class GapFeature {
         if (this.lastGapCheck + 5000 < now) {
             this.lastGapCheck = now;
             const rnd = Math.random();
-            if (rnd < 0.33) {
+            if (rnd < 0.15) {
                 return true;
             }
         }
@@ -72,7 +43,6 @@ export class GapFeature {
 
     activate() {
         this.isActive = true;
-
     }
 
     increaseGapCount() {
@@ -88,18 +58,16 @@ export class Player {
     private lastPosition: Point;
     private currPosition: Point;
     private currAngleDeg: number;
-    private inGapeMode = false;
     private leftPressed?: boolean;
     private rightPressed?: boolean;
     private lineWidth: number;
-    private boostReservoir = new BoostReservoir();
+    boostFeature = new BoostFeature();
     private gapFeature = new GapFeature();
     private collisionDetector: CollisionDetector;
     alive: boolean = true;
     strokeStyle: string;
-    private last
 
-    constructor(private readonly ctx: CanvasRenderingContext2D, private readonly name: string,
+    constructor(private readonly ctx: CanvasRenderingContext2D, readonly name: string,
                 point: Point, angle: number, color: string) {
         this.currPosition = new Point(point.x, point.y);
         this.lastPosition = new Point(this.currPosition.x, this.currPosition.y);
@@ -111,8 +79,8 @@ export class Player {
 
     move() {
         let rotationStep = ROTATION_STEP;
-        if (this.boostReservoir.isActivated()) {
-            rotationStep = rotationStep * this.boostReservoir.getBoostAmount();
+        if (this.boostFeature.isActive) {
+            rotationStep = rotationStep * this.boostFeature.getBoostAmount();
         }
         if (this.leftPressed) {
             this.currAngleDeg -= rotationStep;
@@ -149,7 +117,7 @@ export class Player {
             } else if (cmd === INPUT_ACTION.ROTATE_RIGHT) {
                 this.rightPressed = false;
             } else if (cmd === INPUT_ACTION.ROTATE_BOOST) {
-                this.boostReservoir.handleBoostPressed(true);
+                this.boostFeature.request(false);
             }
         } else {
             if (cmd === INPUT_ACTION.ROTATE_LEFT) {
@@ -157,7 +125,7 @@ export class Player {
             } else if (cmd === INPUT_ACTION.ROTATE_RIGHT) {
                 this.rightPressed = true;
             } else if (cmd === INPUT_ACTION.ROTATE_BOOST) {
-                this.boostReservoir.handleBoostPressed();
+                this.boostFeature.request();
             }
         }
     }

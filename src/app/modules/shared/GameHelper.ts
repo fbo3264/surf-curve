@@ -6,8 +6,8 @@ export class GameHelper {
         return window.performance.now();
     }
 
-    static GAME_BOARD_WIDTH: number;
-    static GAME_BOARD_HEIGHT: number;
+    static GAME_BOARD_WIDTH = 1024;
+    static GAME_BOARD_HEIGHT = 800;
     static START_POSITIONS: any[] = [];
 
     static initStartPosistions() {

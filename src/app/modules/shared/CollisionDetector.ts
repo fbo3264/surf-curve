@@ -9,14 +9,13 @@ export class CollisionDetector {
 
     static collisionBoxes = [];
 
-    static put(point) {
+    static put(point:Point) {
         // calc box around point
         // x = 100, y = 90 -> 95, 105, 85, 95
-        this.collisionBoxes.push(point.getPointBox());
+        this.collisionBoxes.push(point.getCollisionBox());
     }
 
     static hasCollision(point: Point) {
-        return false;
         if (point.x >= GameHelper.GAME_BOARD_WIDTH || point.x < 0 || point.y < 0 || point.y >= GameHelper.GAME_BOARD_HEIGHT) {
             return true;
         }

@@ -1,9 +1,6 @@
-import {GameBoardComponent} from "./modules/game-board/game-board.component";
-import {GameHelper} from "./modules/shared/GameHelper";
-
 export const ROTATION_STEP = 5;
-export const TRANSLATION_STEP = 2;
-export const GAP_STEP_SIZE = TRANSLATION_STEP * 5;
+export const TRANSLATION_STEP = 3;
+export const GAP_STEP_SIZE = TRANSLATION_STEP * 3;
 export const ROTATE_BOOST_DURATION: number = 3000;
 export const ROTATE_BOOST_FACTOR = 3;
 

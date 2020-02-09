@@ -1,10 +1,35 @@
-<div fxFlexFill fxLayout="column" fxLayoutAlign="center">
-    <div #canvasHolder fxFlexFill fxFlex="90">
-        <canvas (resize)="handleResize()" #board class="game-board"></canvas>
-    </div>
-    <div fxFlex="10">
-        <button (click)="addPlayer()" class="play-button">Add Player</button>
-        <button (click)="startGame()" class="play-button">Play</button>
-        <button (click)="resetGame()" class="play-button">Reset game</button>
+<div fxFlexFill fxLayout="column">
+    <div class="game-board" fxLayout="row" fxLayoutAlign="space-between center">
+        <div class="game-ctrls" fxLayout="column">
+            <button [disabled]="gameRunning" mat-flat-button color="primary" (click)="addPlayer()"
+                    class="play-button">Add
+                Player
+            </button>
+            <button [disabled]="gameRunning" mat-flat-button color="accent" (click)="startGame()" class="play-button">
+                {{gamePaused ? 'Resume' : 'Play'}}
+            </button>
+            <button [disabled]="!gameRunning" mat-flat-button color="accent" (click)="pauseGame()"
+                    class="play-button">Pause Game
+            </button>
+            <button [disabled]="!gameRunning" mat-flat-button color="warn" (click)="resetGame()"
+                    class="play-button">Reset Game
+            </button>
+        </div>
+        <div #canvasHolder>
+            <canvas (resize)="handleResize()" #board></canvas>
+        </div>
+        <div class="game-status-bar" fxLayout="column">
+            <mat-card *ngFor="let player of this.players">
+                <mat-card-header>
+                    <mat-card-title>{{player.name}}</mat-card-title>
+                    <mat-card-subtitle>Color: {{player.strokeStyle}}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <h3>Boost status</h3>
+                    <p> Recharging: {{player.boostFeature.isRecharging}}</p>
+                    <p>In Use: {{player.boostFeature.isActive}}</p>
+                </mat-card-content>
+            </mat-card>
+        </div>
     </div>
 </div>
